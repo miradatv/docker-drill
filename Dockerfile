@@ -1,25 +1,43 @@
-FROM java:openjdk-7-jre
+FROM java:openjdk-7-jdk
+MAINTAINER Oscar Morante <oscar.morante@mirada.tv>
 
-RUN mkdir -p /drill-scripts && \
-    mkdir -p /opt/drill && \
-    mkdir -p /var/log/drill
+RUN apt-get update && apt-get install -y \
+  libsnappy1 \
+  libssl-dev
 
-RUN curl -o apache-drill-1.4.0.tar.gz http://www.eu.apache.org/dist/drill/drill-1.4.0/apache-drill-1.4.0.tar.gz && \
-    tar -zxpf apache-drill-1.4.0.tar.gz -C /opt/drill
-RUN rm apache-drill-1.4.0.tar.gz
+RUN cp /usr/lib/jvm/java-7-openjdk-amd64/lib/tools.jar /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/ext
 
-#use DRILL_MAX_DIRECT_MEMORY and DRILL_HEAP to control the memory allocation
-#also use  DRILL_CLUSTER and ZOOKEEPER
+RUN mkdir -p /opt /var/log/drill
 
-ADD drill-env.sh /opt/drill/apache-drill-1.4.0/conf/drill-env.sh
+ENV HADOOP_VERSION=2.7.1
+ENV DRILL_VERSION=1.8.0-SNAPSHOT
+
+# Install Hadoop from local tarball (for the native libs)
+ADD hadoop-$HADOOP_VERSION.tar.gz /opt
+
+# Install Drill from local tarball
+ADD apache-drill-$DRILL_VERSION.tar.gz /opt
+
+ADD drill-env.sh /opt/apache-drill-$DRILL_VERSION/conf/drill-env.sh
+ADD core-site.xml /opt/apache-drill-$DRILL_VERSION/conf/core-site.xml
+ADD logback.xml /opt/apache-drill-$DRILL_VERSION/conf/logback.xml
 
 ENV DRILL_LOG_DIR=/var/log/drill
 ENV DRILLBIT_LOG_PATH=/var/log/drill/drillbit.log
 ENV DRILLBIT_QUERY_LOG_PATH=/var/log/drill/drill-query.log
 ENV DRILL_MAX_DIRECT_MEMORY=8G
-ENV DRILL_HEAP=4G  
-ENV DRILL_CLUSTER=drillbit1
+ENV DRILL_HEAP=4G
+ENV DRILL_CLUSTER=drillcluster
+ENV DRILL_BUFFER_SIZE=100
+ENV S3A_CONNECTION_MAXIMUM=15
+ENV S3A_ENDPOINT=s3.amazonaws.com
 
-ENTRYPOINT /opt/drill/apache-drill-1.4.0/bin/runbit
+ENTRYPOINT /opt/apache-drill-$DRILL_VERSION/bin/runbit
 
 EXPOSE 8047
+EXPOSE 8048
+EXPOSE 31010
+EXPOSE 31011
+EXPOSE 31012
+EXPOSE 46655/udp
+
