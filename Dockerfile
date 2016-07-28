@@ -9,7 +9,7 @@ RUN cp /usr/lib/jvm/java-7-openjdk-amd64/lib/tools.jar /usr/lib/jvm/java-7-openj
 
 RUN mkdir -p /opt /var/log/drill
 
-ENV HADOOP_VERSION=2.7.1
+ENV HADOOP_VERSION=2.8.0-SNAPSHOT
 ENV DRILL_VERSION=1.8.0-SNAPSHOT
 
 # Install Hadoop from local tarball (for the native libs)
