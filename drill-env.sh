@@ -1,44 +1,26 @@
-# Licensed to the Apache Software Foundation (ASF) under one or more
-# contributor license agreements.  See the NOTICE file distributed with
-# this work for additional information regarding copyright ownership.
-# The ASF licenses this file to You under the Apache License, Version 2.0
-# (the "License"); you may not use this file except in compliance with
-# the License.  You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-DRILL_MAX_DIRECT_MEMORY=${DRILL_MAX_DIRECT_MEMORY:="8G"}
-DRILL_HEAP=${DRILL_HEAP:="4G"}
-DRILL_BUFFER_SIZE=${DRILL_BUFFER_SIZE:=100}
-DRILL_LOG_LEVEL=${DRILL_LOG_LEVEL:=info}
+export DRILL_BUFFER_SIZE=${DRILL_BUFFER_SIZE:=100}
+export DRILL_LOG_LEVEL=${DRILL_LOG_LEVEL:=info}
+export DRILL_JAVA_LIB_PATH="/opt/hadoop-$HADOOP_VERSION/lib/native"
 
 env | grep -E "ZOOKEEPER|DRILL|S3A"
 
-export DRILL_JAVA_OPTS="-Xms$DRILL_HEAP -Xmx$DRILL_HEAP -XX:MaxDirectMemorySize=$DRILL_MAX_DIRECT_MEMORY -XX:MaxPermSize=512M -XX:ReservedCodeCacheSize=1G -Ddrill.exec.enable-epoll=true -Djava.library.path=/opt/hadoop-$HADOOP_VERSION/lib/native"
-
-# Class unloading is disabled by default in Java 7
-# http://hg.openjdk.java.net/jdk7u/jdk7u60/hotspot/file/tip/src/share/vm/runtime/globals.hpp#l1622
-export SERVER_GC_OPTS="-XX:+CMSClassUnloadingEnabled -XX:+UseG1GC "
+drill_conf=/opt/apache-drill-$DRILL_VERSION/conf
 
 # S3A Config
 if [ -d /etc/aws-credentials ]; then
   sed -i "s|S3A_ACCESS_KEY|$(cat /etc/aws-credentials/key)|" \
-    /opt/apache-drill-$DRILL_VERSION/conf/core-site.xml
+    $drill_conf/core-site.xml
   sed -i "s|S3A_SECRET_KEY|$(cat /etc/aws-credentials/secret)|" \
-    /opt/apache-drill-$DRILL_VERSION/conf/core-site.xml
+    $drill_conf/core-site.xml
 fi
 
-sed -i "s|S3A_CONNECTION_MAXIMUM|$S3A_CONNECTION_MAXIMUM|" /opt/apache-drill-$DRILL_VERSION/conf/core-site.xml
-sed -i "s|S3A_ENDPOINT|$S3A_ENDPOINT|" /opt/apache-drill-$DRILL_VERSION/conf/core-site.xml
-sed -i "s|DRILL_LOG_LEVEL|$DRILL_LOG_LEVEL|" /opt/apache-drill-$DRILL_VERSION/conf/logback.xml
+sed -i "s|S3A_CONNECTION_MAXIMUM|$S3A_CONNECTION_MAXIMUM|" $drill_conf/core-site.xml
+sed -i "s|S3A_ENDPOINT|$S3A_ENDPOINT|" $drill_conf/core-site.xml
+sed -i "s|DRILL_LOG_LEVEL|$DRILL_LOG_LEVEL|" $drill_conf/logback.xml
 
 # Drill overrides
-echo "drill.exec.cluster-id: \"$DRILL_CLUSTER\"" > /opt/apache-drill-$DRILL_VERSION/conf/drill-override.conf
-echo "drill.exec.zk.connect: \"$ZOOKEEPER\"" >> /opt/apache-drill-$DRILL_VERSION/conf/drill-override.conf
-echo "drill.exec.buffer.size: $DRILL_BUFFER_SIZE" >> /opt/apache-drill-$DRILL_VERSION/conf/drill-override.conf
+drill_override_conf=$drill_conf/drill-override.conf
+echo "drill.exec.cluster-id: \"$DRILL_CLUSTER\"" > $drill_override_conf
+echo "drill.exec.zk.connect: \"$ZOOKEEPER\"" >> $drill_override_conf
+echo "drill.exec.buffer.size: $DRILL_BUFFER_SIZE" >> $drill_override_conf
 
