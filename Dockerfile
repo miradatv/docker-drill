@@ -18,6 +18,10 @@ ADD hadoop-$HADOOP_VERSION.tar.gz /opt
 # Install Drill from local tarball
 ADD apache-drill-$DRILL_VERSION.tar.gz /opt
 
+# Add Mirada's user defined functions
+COPY tvmetrix-drill-udf-1.3.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
+COPY tvmetrix-drill-udf-1.3-sources.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
+
 ADD drill-env.sh /opt/apache-drill-$DRILL_VERSION/conf/drill-env.sh
 ADD core-site.xml /opt/apache-drill-$DRILL_VERSION/conf/core-site.xml
 ADD logback.xml /opt/apache-drill-$DRILL_VERSION/conf/logback.xml
