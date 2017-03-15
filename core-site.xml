@@ -19,6 +19,11 @@
 <configuration>
 
   <property>
+    <name>fs.alluxio.impl</name>
+    <value>alluxio.hadoop.FileSystem</value>
+  </property>
+
+  <property>
     <name>fs.s3a.access.key</name>
     <description>AWS access key ID. Omit for Role-based authentication.</description>
     <value>S3A_ACCESS_KEY</value>

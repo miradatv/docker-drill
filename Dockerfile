@@ -10,7 +10,7 @@ RUN cp /usr/lib/jvm/java-7-openjdk-amd64/lib/tools.jar /usr/lib/jvm/java-7-openj
 RUN mkdir -p /opt /var/log/drill
 
 ENV HADOOP_VERSION=2.8.0-SNAPSHOT
-ENV DRILL_VERSION=1.8.0-SNAPSHOT
+ENV DRILL_VERSION=1.9.0-SNAPSHOT
 
 # Install Hadoop from local tarball (for the native libs)
 ADD hadoop-$HADOOP_VERSION.tar.gz /opt
@@ -19,8 +19,13 @@ ADD hadoop-$HADOOP_VERSION.tar.gz /opt
 ADD apache-drill-$DRILL_VERSION.tar.gz /opt
 
 # Add Mirada's user defined functions
-COPY tvmetrix-drill-udf-1.3.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
-COPY tvmetrix-drill-udf-1.3-sources.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
+COPY tvmetrix-drill-udf-0.1.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
+COPY tvmetrix-drill-udf-0.1-sources.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
+
+# Add Alluxio client
+COPY alluxio-core-common-1.3.1-SNAPSHOT.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
+COPY alluxio-core-client-1.3.1-SNAPSHOT.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
+COPY alluxio-underfs-s3a-1.3.1-SNAPSHOT.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
 
 ADD drill-env.sh /opt/apache-drill-$DRILL_VERSION/conf/drill-env.sh
 ADD core-site.xml /opt/apache-drill-$DRILL_VERSION/conf/core-site.xml
@@ -36,12 +41,7 @@ ENV DRILL_BUFFER_SIZE=100
 ENV S3A_CONNECTION_MAXIMUM=15
 ENV S3A_ENDPOINT=s3.amazonaws.com
 
-EXPOSE 8047
-EXPOSE 8048
-EXPOSE 31010
-EXPOSE 31011
-EXPOSE 31012
-EXPOSE 46655/udp
+EXPOSE 8047 8048 31010 31011 31012 46655/udp
 
 ENTRYPOINT /opt/apache-drill-$DRILL_VERSION/bin/drillbit.sh run
 
