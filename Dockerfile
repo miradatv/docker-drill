@@ -9,8 +9,15 @@ RUN cp /usr/lib/jvm/java-7-openjdk-amd64/lib/tools.jar /usr/lib/jvm/java-7-openj
 
 RUN mkdir -p /opt /var/log/drill
 
-ENV HADOOP_VERSION=2.8.0-SNAPSHOT
-ENV DRILL_VERSION=1.9.0-SNAPSHOT
+ARG HADOOP_VERSION
+ARG DRILL_VERSION
+ARG ALLUXIO_CLIENT_VERSION
+ARG MIRADA_UDF_VERSION
+
+ENV HADOOP_VERSION=${HADOOP_VERSION}
+ENV DRILL_VERSION=${DRILL_VERSION}
+ENV ALLUXIO_CLIENT_VERSION=${ALLUXIO_CLIENT_VERSION}
+ENV MIRADA_UDF_VERSION=${MIRADA_UDF_VERSION}
 
 # Install Hadoop from local tarball (for the native libs)
 ADD hadoop-$HADOOP_VERSION.tar.gz /opt
@@ -19,13 +26,13 @@ ADD hadoop-$HADOOP_VERSION.tar.gz /opt
 ADD apache-drill-$DRILL_VERSION.tar.gz /opt
 
 # Add Mirada's user defined functions
-COPY tvmetrix-drill-udf-0.1.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
-COPY tvmetrix-drill-udf-0.1-sources.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
+COPY tvmetrix-drill-udf-$MIRADA_UDF_VERSION.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
+COPY tvmetrix-drill-udf-$MIRADA_UDF_VERSION-sources.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
 
 # Add Alluxio client
-COPY alluxio-core-common-1.3.1-SNAPSHOT.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
-COPY alluxio-core-client-1.3.1-SNAPSHOT.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
-COPY alluxio-underfs-s3a-1.3.1-SNAPSHOT.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
+COPY alluxio-core-common-$ALLUXIO_CLIENT_VERSION.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
+COPY alluxio-core-client-$ALLUXIO_CLIENT_VERSION.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
+COPY alluxio-underfs-s3a-$ALLUXIO_CLIENT_VERSION.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
 
 ADD drill-env.sh /opt/apache-drill-$DRILL_VERSION/conf/drill-env.sh
 ADD core-site.xml /opt/apache-drill-$DRILL_VERSION/conf/core-site.xml
