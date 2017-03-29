@@ -1,0 +1,8 @@
+alluxio-*tar.gz
+alluxio-core-client-*.jar
+alluxio-core-common-*.jar
+alluxio-underfs-s3a-*.jar
+apache-drill-*.tar.gz
+tvmetrix-drill-udf-*.jar
+tvmetrix-drill-udf-*-sources.jar
+hadoop-*.tar.gz
