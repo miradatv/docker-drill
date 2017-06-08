@@ -1,6 +1,16 @@
 #!/bin/bash
-export ECR=606039442951.dkr.ecr.us-east-1.amazonaws.com
-export VERSION=1.8.0-SNAPSHOT
+if [ -z "$1" ]
+  then
+    echo "Usage:"
+    echo "------"
+    echo "build.sh <ECR URL> <FILENAME> <AWS PROFILE> <REGION>"
+    echo
+    echo "build.sh 903337876794.dkr.ecr.us-east-1.amazonaws.com 1.8.0-TEST izziWorkbench us-east-1"
+    exit;
+fi
+
+export ECR=$1
+export VERSION=$2
 
 HADOOP_VERSION=2.8.0-SNAPSHOT
 DRILL_VERSION=1.8.0-SNAPSHOT
@@ -21,7 +31,7 @@ download_release_file () {
        --continue \
        --show-progress \
        --auth-no-challenge \
-       --header "Accept: application/octet-stream" \
+       --header="Accept: application/octet-stream" \
        $(echo $url | sed "s%https://%https://${token}:@%") \
        -O $3
 }
@@ -45,9 +55,9 @@ docker build \
   -t apache-drill .
 
 # Tag & Push in Amazon ECR
-$(aws ecr get-login --region us-east-1)
+$(aws --profile %3 ecr get-login --region %4)
 docker tag apache-drill:latest $ECR/apache-drill:$VERSION
-docker tag apache-drill:latest $ECR/apache-drill:latest
+#docker tag apache-drill:latest $ECR/apache-drill:latest
 docker push $ECR/apache-drill:$VERSION
-docker push $ECR/apache-drill:latest
+#docker push $ECR/apache-drill:latest
 
