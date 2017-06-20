@@ -61,7 +61,6 @@ docker build \
   -t apache-drill .
 
 # Tag & Push in Amazon ECR
-#$(aws --profile %3 ecr get-login --region %4)
 $(aws --profile $PROFILE ecr get-login --region $REGION)
 docker tag apache-drill:latest $ECR/apache-drill:$VERSION
 #docker tag apache-drill:latest $ECR/apache-drill:latest
