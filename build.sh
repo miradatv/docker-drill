@@ -17,7 +17,7 @@ export REGION=$4
 HADOOP_VERSION=2.8.0-SNAPSHOT
 DRILL_VERSION=1.8.0-SNAPSHOT
 ALLUXIO_VERSION=1.3.1-SNAPSHOT
-MIRADA_UDF_VERSION=0.3
+MIRADA_UDF_VERSION=0.4
 
 # Download tarballs and jars from github releases (needs personal token in ~/.gitconfig)
 download_release_file () {
@@ -61,7 +61,7 @@ docker build \
   -t apache-drill .
 
 # Tag & Push in Amazon ECR
-$(aws --profile $PROFILE ecr get-login --region $REGION)
+$(aws --profile $PROFILE ecr get-login --region $REGION --no-include-email)
 docker tag apache-drill:latest $ECR/apache-drill:$VERSION
 #docker tag apache-drill:latest $ECR/apache-drill:latest
 docker push $ECR/apache-drill:$VERSION
