@@ -6,7 +6,7 @@ In this directory you can find a simplified Apache Drill environment
 ## Requirements
 
 * Linux system.
-* Docker Engine 1.18.x
+* Docker Engine 18.x
 
 ## Building Docker image
 
