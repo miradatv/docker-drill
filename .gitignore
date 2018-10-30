@@ -6,3 +6,5 @@ apache-drill-*.tar.gz
 tvmetrix-drill-udf-*.jar
 tvmetrix-drill-udf-*-sources.jar
 hadoop-*.tar.gz
+/local-env/log/
+/.idea/
