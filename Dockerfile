@@ -1,11 +1,11 @@
-FROM java:openjdk-7-jdk
+FROM openjdk:8u181-jdk
 MAINTAINER Oscar Morante <oscar.morante@mirada.tv>
 
 RUN apt-get update && apt-get install -y \
-  libsnappy1 \
+  libsnappy1v5 \
   libssl-dev
 
-RUN cp /usr/lib/jvm/java-7-openjdk-amd64/lib/tools.jar /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/ext
+RUN cp /usr/lib/jvm/java-8-openjdk-amd64/lib/tools.jar /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/ext
 
 RUN mkdir -p /opt /var/log/drill
 
@@ -31,8 +31,16 @@ COPY tvmetrix-drill-udf-$MIRADA_UDF_VERSION-sources.jar /opt/apache-drill-$DRILL
 
 # Add Alluxio client
 COPY alluxio-core-common-$ALLUXIO_CLIENT_VERSION.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
-COPY alluxio-core-client-$ALLUXIO_CLIENT_VERSION.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
 COPY alluxio-underfs-s3a-$ALLUXIO_CLIENT_VERSION.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
+COPY alluxio-core-client-$ALLUXIO_CLIENT_VERSION.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
+COPY netty-all-4.0.28.Final.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
+COPY aws-java-sdk-s3-1.11.7.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
+
+# These files must be added for recent versions of Alluxio
+#COPY alluxio-core-client-fs-$ALLUXIO_CLIENT_VERSION.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
+#COPY alluxio-core-client-hdfs-$ALLUXIO_CLIENT_VERSION.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
+#COPY alluxio-core-protobuf-$ALLUXIO_CLIENT_VERSION.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
+
 
 ADD drill-env.sh /opt/apache-drill-$DRILL_VERSION/conf/drill-env.sh
 ADD core-site.xml /opt/apache-drill-$DRILL_VERSION/conf/core-site.xml
