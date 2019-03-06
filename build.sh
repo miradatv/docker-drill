@@ -3,21 +3,21 @@ if [ -z "$1" ]
   then
     echo "Usage:"
     echo "------"
-    echo "build.sh <ECR URL> <FILENAME> <AWS PROFILE> <REGION>"
+    echo "build.sh <ECR URL> <AWS PROFILE> <REGION>"
     echo
-    echo "build.sh 903337876794.dkr.ecr.us-east-1.amazonaws.com 1.8.0-TEST izziWorkbench us-east-1"
+    echo "build.sh 903337876794.dkr.ecr.us-east-1.amazonaws.com izziWorkbench us-east-1"
     exit;
 fi
 
 export ECR=$1
-export VERSION=$2
-export PROFILE=$3
-export REGION=$4
+export VERSION=1.8.2-3
+export PROFILE=$2
+export REGION=$3
 
 HADOOP_VERSION=2.8.0-SNAPSHOT
 DRILL_VERSION=1.8.0-SNAPSHOT
 ALLUXIO_VERSION=1.3.1-SNAPSHOT
-MIRADA_UDF_VERSION=0.4
+MIRADA_UDF_VERSION=0.6
 
 # Download tarballs and jars from github releases (needs personal token in ~/.gitconfig)
 download_release_file () {
@@ -44,7 +44,7 @@ download_release_file () {
 
 echo Downloading binaries...
 download_release_file hadoop $HADOOP_VERSION hadoop-$HADOOP_VERSION.tar.gz
-download_release_file drill $DRILL_VERSION apache-drill-$DRILL_VERSION.tar.gz
+#download_release_file drill $DRILL_VERSION apache-drill-$DRILL_VERSION.tar.gz
 download_release_file alluxio $ALLUXIO_VERSION alluxio-$ALLUXIO_VERSION.tar.gz
 download_release_file alluxio $ALLUXIO_VERSION alluxio-core-common-$ALLUXIO_VERSION.jar
 download_release_file alluxio $ALLUXIO_VERSION alluxio-core-client-$ALLUXIO_VERSION.jar
@@ -63,7 +63,5 @@ docker build \
 # Tag & Push in Amazon ECR
 $(aws --profile $PROFILE ecr get-login --region $REGION --no-include-email)
 docker tag apache-drill:latest $ECR/apache-drill:$VERSION
-#docker tag apache-drill:latest $ECR/apache-drill:latest
 docker push $ECR/apache-drill:$VERSION
-#docker push $ECR/apache-drill:latest
 
