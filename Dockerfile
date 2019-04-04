@@ -1,38 +1,27 @@
-FROM java:openjdk-7-jdk
-MAINTAINER Oscar Morante <oscar.morante@mirada.tv>
+FROM debian:9.5
 
-RUN apt-get update && apt-get install -y \
-  libsnappy1 \
-  libssl-dev
+ARG DRILL_VERSION=1.15.0
+ARG ALLUXIO_CLIENT_VERSION=1.8.1
 
-RUN cp /usr/lib/jvm/java-7-openjdk-amd64/lib/tools.jar /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/ext
+RUN ln -f -s /usr/share/zoneinfo/Europe/Madrid /etc/localtime \
+    && apt-get update \
+	&& apt-get install -y wget curl htop procps net-tools vim nano \
+		openjdk-8-jdk \
+	&& cd /tmp \
+	&& wget http://apache.mirrors.hoobly.com/drill/drill-${DRILL_VERSION}/apache-drill-${DRILL_VERSION}.tar.gz \
+	&& tar -xvf apache-drill-${DRILL_VERSION}.tar.gz \
+	&& mv apache-drill-${DRILL_VERSION} /opt/ \
+	&& ln -s /opt/apache-drill-${DRILL_VERSION}/bin/sqlline /usr/local/bin/sqlline \
+ 	&& ln -s /opt/apache-drill-${DRILL_VERSION}/bin/drill-embedded /usr/local/bin/drill-embedded
+
+RUN cd /tmp && \
+	wget http://downloads.alluxio.org/downloads/files/${ALLUXIO_CLIENT_VERSION}/alluxio-${ALLUXIO_CLIENT_VERSION}-bin.tar.gz && \
+	tar -xvf alluxio-${ALLUXIO_CLIENT_VERSION}-bin.tar.gz && \
+	cp alluxio-${ALLUXIO_CLIENT_VERSION}/client/alluxio-${ALLUXIO_CLIENT_VERSION}-client.jar /opt/apache-drill-${DRILL_VERSION}/jars/
 
 RUN mkdir -p /opt /var/log/drill
 
-ARG HADOOP_VERSION
-ARG DRILL_VERSION
-ARG ALLUXIO_CLIENT_VERSION
-ARG MIRADA_UDF_VERSION
-
-ENV HADOOP_VERSION=${HADOOP_VERSION}
-ENV DRILL_VERSION=${DRILL_VERSION}
-ENV ALLUXIO_CLIENT_VERSION=${ALLUXIO_CLIENT_VERSION}
-ENV MIRADA_UDF_VERSION=${MIRADA_UDF_VERSION}
-
-# Install Hadoop from local tarball (for the native libs)
-ADD hadoop-$HADOOP_VERSION.tar.gz /opt
-
-# Install Drill from local tarball
-ADD apache-drill-$DRILL_VERSION.tar.gz /opt
-
-# Add Mirada's user defined functions
-COPY tvmetrix-drill-udf-$MIRADA_UDF_VERSION.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
-COPY tvmetrix-drill-udf-$MIRADA_UDF_VERSION-sources.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
-
-# Add Alluxio client
-COPY alluxio-core-common-$ALLUXIO_CLIENT_VERSION.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
-COPY alluxio-core-client-$ALLUXIO_CLIENT_VERSION.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
-COPY alluxio-underfs-s3a-$ALLUXIO_CLIENT_VERSION.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
+WORKDIR /opt/apache-drill-${DRILL_VERSION}
 
 ADD drill-env.sh /opt/apache-drill-$DRILL_VERSION/conf/drill-env.sh
 ADD core-site.xml /opt/apache-drill-$DRILL_VERSION/conf/core-site.xml
@@ -51,4 +40,3 @@ ENV S3A_ENDPOINT=s3.amazonaws.com
 EXPOSE 8047 8048 31010 31011 31012 46655/udp
 
 ENTRYPOINT /opt/apache-drill-$DRILL_VERSION/bin/drillbit.sh run
-
