@@ -2,6 +2,7 @@ FROM debian:9.5
 
 ARG DRILL_VERSION=1.15.0
 ARG ALLUXIO_CLIENT_VERSION=1.8.1
+ARG MIRADA_UDF_VERSION
 
 RUN ln -f -s /usr/share/zoneinfo/Europe/Madrid /etc/localtime \
     && apt-get update \
@@ -20,6 +21,10 @@ RUN cd /tmp && \
 	cp alluxio-${ALLUXIO_CLIENT_VERSION}/client/alluxio-${ALLUXIO_CLIENT_VERSION}-client.jar /opt/apache-drill-${DRILL_VERSION}/jars/
 
 RUN mkdir -p /opt /var/log/drill
+
+ENV DRILL_VERSION=${DRILL_VERSION}
+ENV ALLUXIO_CLIENT_VERSION=${ALLUXIO_CLIENT_VERSION}
+ENV MIRADA_UDF_VERSION=${MIRADA_UDF_VERSION}
 
 WORKDIR /opt/apache-drill-${DRILL_VERSION}
 

@@ -7,7 +7,7 @@ usage() {
     echo "        ${0}  -e tvi -p perfil-pruebas"
 }
 
-MIRADA_REVISION=1
+MIRADA_REVISION=2
 IMAGE_NAME=apache-drill
 IMAGE_TAG=1.15.0-$MIRADA_REVISION
 
@@ -52,7 +52,7 @@ elif [[ "$TARGET_ENVIRONMENT" == "izzi" ]]; then
     AWS_REGION=us-west-2
     ECR_URN=628220405432.dkr.ecr.$AWS_REGION.amazonaws.com
 else
-    echo "ERROR: Invalid target environment."
+    echo "ERROR: Invalid target environment. Valid are: tvi, dgtv, viya, one, izzi"
     usage
     exit 127
 fi
