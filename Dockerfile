@@ -32,6 +32,10 @@ ADD drill-env.sh /opt/apache-drill-$DRILL_VERSION/conf/drill-env.sh
 ADD core-site.xml /opt/apache-drill-$DRILL_VERSION/conf/core-site.xml
 ADD logback.xml /opt/apache-drill-$DRILL_VERSION/conf/logback.xml
 
+# Add Mirada's user defined functions
+COPY tvmetrix-drill-udf-$MIRADA_UDF_VERSION.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
+COPY tvmetrix-drill-udf-$MIRADA_UDF_VERSION-sources.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
+
 ENV DRILL_LOG_DIR=/var/log/drill
 ENV DRILLBIT_LOG_PATH=/var/log/drill/drillbit.log
 ENV DRILLBIT_QUERY_LOG_PATH=/var/log/drill/drill-query.log
