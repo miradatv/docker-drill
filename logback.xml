@@ -65,21 +65,66 @@
       </encoder>
     </appender>
 
+    <appender name="ALLUXIO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+      <file>/var/log/drill/alluxio-client.log</file>
+      <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+        <fileNamePattern>/var/log/drill/alluxio-client.log.%i</fileNamePattern>
+        <minIndex>1</minIndex>
+        <maxIndex>10</maxIndex>
+      </rollingPolicy>
+
+      <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+        <maxFileSize>100MB</maxFileSize>
+      </triggeringPolicy>
+      <encoder>
+        <pattern>%date{ISO8601} [%thread] %-5level %logger{36} - %msg%n</pattern>
+      </encoder>
+    </appender>    
+
+  <logger name="alluxio.hadoop.AbstractFileSystem" additivity="false">
+    <level value="debug" />
+    <appender-ref ref="ALLUXIO" />
+  </logger>
+
+  <logger name="alluxio.hadoop.HdfsFileInputStream" additivity="false">
+    <level value="debug" />
+    <appender-ref ref="ALLUXIO" />
+  </logger>
+
+  <logger name="alluxio.AbstractClient" additivity="false">
+    <level value="debug" />
+    <appender-ref ref="ALLUXIO" />
+  </logger>
+
+  <logger name="alluxio.conf.AlluxioProperties" additivity="false">
+    <level value="debug" />
+    <appender-ref ref="ALLUXIO" />
+  </logger>
+
+  <logger name="alluxio.conf.InstancedConfiguration" additivity="false">
+    <level value="debug" />
+    <appender-ref ref="ALLUXIO" />
+  </logger>
+
+  <logger name="alluxio.security.LoginUser" additivity="false">
+    <level value="debug" />
+    <appender-ref ref="ALLUXIO" />
+  </logger>
+
 
   <logger name="org.apache.drill" additivity="false">
-    <level value="DRILL_LOG_LEVEL" />
+    <level value="info" />
     <appender-ref ref="STDOUT" />
   </logger>
 
   <logger name="query.logger" additivity="false">
-    <level value="DRILL_LOG_LEVEL" />
+    <level value="info" />
     <appender-ref ref="STDOUT" />
   </logger>
 
   <root>
-    <level value="DRILL_LOG_LEVEL" />
+    <level value="info" />
     <appender-ref ref="STDOUT" />
   </root>
 
 </configuration>
-

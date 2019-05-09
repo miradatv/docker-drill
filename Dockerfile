@@ -16,9 +16,9 @@ RUN ln -f -s /usr/share/zoneinfo/Europe/Madrid /etc/localtime \
  	&& ln -s /opt/apache-drill-${DRILL_VERSION}/bin/drill-embedded /usr/local/bin/drill-embedded
 
 RUN cd /tmp && \
-	wget http://downloads.alluxio.org/downloads/files/${ALLUXIO_CLIENT_VERSION}/alluxio-${ALLUXIO_CLIENT_VERSION}-bin.tar.gz && \
+	wget --no-check-certificate https://downloads.alluxio.io/downloads/files/${ALLUXIO_CLIENT_VERSION}/alluxio-${ALLUXIO_CLIENT_VERSION}-bin.tar.gz && \
 	tar -xvf alluxio-${ALLUXIO_CLIENT_VERSION}-bin.tar.gz && \
-	cp alluxio-${ALLUXIO_CLIENT_VERSION}/client/alluxio-${ALLUXIO_CLIENT_VERSION}-client.jar /opt/apache-drill-${DRILL_VERSION}/jars/
+	cp alluxio-${ALLUXIO_CLIENT_VERSION}/client/alluxio-${ALLUXIO_CLIENT_VERSION}-client.jar /opt/apache-drill-${DRILL_VERSION}/jars/classb
 
 RUN mkdir -p /opt /var/log/drill
 
