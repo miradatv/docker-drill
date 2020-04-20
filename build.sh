@@ -27,10 +27,10 @@ download_release_file () {
   fi
 }
 
-MIRADA_REVISION=5
+MIRADA_REVISION=6
 IMAGE_NAME=apache-drill
 IMAGE_TAG=1.16.0-$MIRADA_REVISION
-MIRADA_UDF_VERSION=0.9
+MIRADA_UDF_VERSION=0.10
 
 
 ECR_URN=docker-registry.mirada.lab:5000/logiq
