@@ -3,6 +3,7 @@ FROM debian:9.5
 ARG DRILL_VERSION=1.16.0
 ARG ALLUXIO_CLIENT_VERSION=1.8.1
 ARG MIRADA_UDF_VERSION
+ARG GEOIP_UDF_VERSION
 
 RUN ln -f -s /usr/share/zoneinfo/Europe/Madrid /etc/localtime \
     && apt-get update \
@@ -35,6 +36,8 @@ ADD logback.xml /opt/apache-drill-$DRILL_VERSION/conf/logback.xml
 # Add Mirada's user defined functions
 COPY tvmetrix-drill-udf-$MIRADA_UDF_VERSION.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
 COPY tvmetrix-drill-udf-$MIRADA_UDF_VERSION-sources.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
+COPY drill-geoip-functions-$GEOIP_UDF_VERSION.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
+COPY drill-geoip-functions-$GEOIP_UDF_VERSION-sources.jar /opt/apache-drill-$DRILL_VERSION/jars/3rdparty/
 
 ENV DRILL_LOG_DIR=/var/log/drill
 ENV DRILLBIT_LOG_PATH=/var/log/drill/drillbit.log
