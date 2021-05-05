@@ -27,11 +27,11 @@ download_release_file () {
   fi
 }
 
-MIRADA_REVISION=8
+MIRADA_REVISION=11
 IMAGE_NAME=apache-drill
 IMAGE_TAG=1.16.0-$MIRADA_REVISION
-MIRADA_UDF_VERSION=0.12
-GEOIP_UDF_VERSION=1.0
+MIRADA_UDF_VERSION=0.13
+GEOIP_UDF_VERSION=1.1
 
 ECR_URN=docker-registry.mirada.lab:5000/logiq
 echo Downloading binaries...
@@ -49,5 +49,5 @@ docker build \
     -t $IMAGE_NAME:$IMAGE_TAG .
 
 
-#docker tag $IMAGE_NAME:$IMAGE_TAG $ECR_URN/$IMAGE_NAME:$IMAGE_TAG
-#docker push $ECR_URN/$IMAGE_NAME:$IMAGE_TAG
+docker tag $IMAGE_NAME:$IMAGE_TAG $ECR_URN/$IMAGE_NAME:$IMAGE_TAG
+docker push $ECR_URN/$IMAGE_NAME:$IMAGE_TAG
